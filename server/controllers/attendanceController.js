@@ -77,9 +77,7 @@ export const saveAttendance = async (req, res) => {
             isCorrection
         } = req.body;
 
-        // -----------------------------
         // Check Future Date
-        // -----------------------------
 
         const today = new Date();
         today.setHours(0,0,0,0);
@@ -104,9 +102,7 @@ export const saveAttendance = async (req, res) => {
 
         const normalizedAttendanceDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
 
-        // -----------------------------
         // Check Duplicate Attendance
-        // -----------------------------
 
         const existingAttendance = await pool.query(
 
@@ -126,9 +122,7 @@ export const saveAttendance = async (req, res) => {
 
         }
 
-        // -----------------------------
         // Correction Mode
-        // -----------------------------
 
         if(isCorrection){
 
@@ -143,9 +137,8 @@ export const saveAttendance = async (req, res) => {
 
         }
 
-        // -----------------------------
+
         // Insert Attendance
-        // -----------------------------
 
         for(const student of students){
 
@@ -188,7 +181,6 @@ export const saveAttendance = async (req, res) => {
 
 };
 
-// Attendance history
 // Get attendance history
 export const getAttendanceHistory = async (req, res) => {
   try {
