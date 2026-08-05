@@ -34,92 +34,72 @@ function Attendance() {
     });
   };
 
-  const groupedStudents = Object.entries(
-    students.reduce((groups, student) => {
+  const groupStudentsByBatch = (studentList) => {
+    const groups = {};
+
+    studentList.forEach((student) => {
       const batchName = student.batch || "Unassigned";
+
       if (!groups[batchName]) {
         groups[batchName] = [];
       }
+
       groups[batchName].push(student);
-      return groups;
-    }, {})
-  ).sort(([batchA], [batchB]) => batchA.localeCompare(batchB));
+    });
+
+    return Object.entries(groups).sort(([batchA], [batchB]) =>
+      batchA.localeCompare(batchB)
+    );
+  };
+
+  const groupedStudents = groupStudentsByBatch(students);
 
   useEffect(() => {
-
-    loadStudents();
-
     setAttendanceDate(getLocalDateString());
-
+    loadStudents();
   }, []);
 
   const loadStudents = async () => {
-
     try {
-
       const response = await getStudents();
-
       const studentList = response.data.map((student) => ({
         ...student,
         status: "Present",
       }));
 
       setStudents(studentList);
-
     } catch (error) {
-
       toast.error("Failed to load students");
-
     }
-
   };
 
   const handleStatusChange = (studentId, status) => {
-
     const updatedStudents = students.map((student) => {
-
       if (student.id === studentId) {
-        return {
-          ...student,
-          status,
-        };
+        return { ...student, status };
       }
-
       return student;
-
     });
 
     setStudents(updatedStudents);
-
   };
 
   const handleSubmit = async () => {
-
     try {
-
       const attendanceData = {
-
         attendanceDate,
-
         isCorrection,
-
         students: students.map((student) => ({
           studentId: student.id,
           status: student.status,
         })),
-
       };
 
       const response = await saveAttendance(attendanceData);
-
       toast.success(response.data.message);
-
     } catch (error) {
-
       toast.error(error.response?.data?.message || "Failed to save attendance");
-
     }
-
   };
 
   return (
